@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block current_app_content %}
+    <br>
+    <div class="row">
+        <h1 class="mr-auto">{{ _('Create Company Brand') }}</h1>
+        <div class="ml-auto">
+            <a class="btn btn-light" href="{{ url_for('location.create_store') }}" role="button">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>
+                <button type="button" class="btn btn-info mb-2 pull-right" data-toggle="modal"
+                        data-target="#exampleModalLong">
+                    New Brand
+                </button>
+                <div class="modal fade bd-example-modal-lg" id="exampleModalLong" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLongTitle"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-left" id="exampleModalLongTitle">New Brand</h5>
+                            </div>
+                            <div class="modal-body text-left">
+                                {{ wtf.quick_form(form) }}
+                                <br>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="h4"><strong>Icon</strong></th>
+            <th class="h4"><strong>Brand</strong></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for companybrand in cobrands %}
+            <tr>
+                <td><img src="{{ companybrand.photourl }}"></td>
+                <td>{{ companybrand.companybrand }}</td>
+                <td class="text-right">
+                    <a class="btn btn-secondary" href="/edit_CoBrand/{{ companybrand.id }}" role="button">
+                        <i class="fa fa-cog"></i></a>
+                    <a class="btn btn-danger" href="/delete_CoBrand/{{ companybrand.id }}" role="button">
+                        <i class="fa fa-trash-o"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+{% endblock %}
