@@ -195,3 +195,31 @@ class ProductBrand(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.productbrand)
+
+class Feature(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(140))
+    description = db.Column(db.String(140))
+    url = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Feature {}>'.format(self.title)
+    
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    rating1 = db.Column(db.Float)
+    rating2 = db.Column(db.Float)
+    rating3 = db.Column(db.Float)
+    rating4 = db.Column(db.Float)
+    comment = db.Column(db.Text)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+
+class Banner(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    banner = db.Column(db.String(500))
+
+    def __repr__(self):
+        return '{}'.format(self.banner)
