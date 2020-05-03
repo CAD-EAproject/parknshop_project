@@ -15,4 +15,11 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['your-email@example.com']
     LANGUAGES = ['en', 'es', 'zh']
-    POSTS_PER_PAGE = 25
+    POSTS_PER_PAGE = 5
+    PROMOTIONS_PER_PAGE = 2
+    FEATURES_PER_PAGE = 1
+    DISTRICTS_PER_PAGE = 3
+    STORES_PER_PAGE = 5
+    NEWPRODUCT_PER_PAGE = 4
+    PRODUCT_PER_PAGE = 8
+    PRODUCTBRAND_PER_PAGE = 6
