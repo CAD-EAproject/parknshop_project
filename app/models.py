@@ -127,7 +127,7 @@ class Product(db.Model):
                                  secondary=promotion_products,
                                  backref=db.backref('product', lazy='dynamic'))
 
-    class Region(db.Model):
+class Region(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     region = db.Column(db.String(50), unique=True, index=True)
     districts = db.relationship('District', backref='region', lazy='dynamic')
