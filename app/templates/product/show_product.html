@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block current_app_content %}
+    <br>
+    <nav aria-label="breadcrumb">
+        {% for sub_categories in breadcrumb %}
+            <ol class="breadcrumb bg-transparent">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li class="breadcrumb-item active">{{ sub_categories.categories }}</li>
+                <li class="breadcrumb-item " aria-current="page">{{ sub_categories.subcategories }}</li>
+            </ol>
+        {% endfor %}
+    </nav>
+    {% if not current_user.is_anonymous %}
+        <div class="row justify-content-center">
+            <button type="button" class="btn btn-info mb-2 pull-right ml-1 btn-sm" data-toggle="modal"
+                    data-target="#ModalLongRegion">
+                New Product
+            </button>
+            <div class="modal fade bd-example-modal-lg" id="ModalLongRegion" tabindex="-1" role="dialog"
+                 aria-labelledby="ModalLongRegionTitle"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-left" id="ModalLongRegionTitle">New Product</h5>
+                        </div>
+                        <div class="modal-body text-left">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {{ wtf.quick_form(form) }}
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="btn btn-success mb-2 pull-right ml-1 btn-sm" role="button"
+               href="{{ url_for('product.productbrand') }}">New Product Brand
+            </a>
+        </div>
+    {% endif %}
+    <div class="text-center">
+        <a href="#categories" class="btn btn-secondary mb-2 btn-sm btn-block" data-toggle="collapse">
+            <i class="fa fa-chevron-down fa-1x"></i> Categories <i class="fa fa-chevron-down fa-1x"></i></a>
+        <div id="categories" class="collapse">
+            <div class="col-md-12">
+                {% for categories in categoriess %}
+                    <div class="dropright text-left ml-1 mb-1">
+                        <button class="btn btn-md dropdown-toggle col-md-6 text-center" type="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                            <span>{{ categories.categories }}</span>
+                        </button>
+                        <div class="dropdown-menu col-md-6 text-center bg-light">
+                            {% for sub_categories in subcats %}
+                                {% if sub_categories.categories_id == categories.id %}
+                                    <a class="dropdown-item"
+                                       href="/show_product/{{ sub_categories.id }}">{{ sub_categories.subcategories }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-around">
+        {% for product in products %}
+            <div class="card col-lg-3 bg-transparent border-secondary" style="width: 14rem;">
+                <img src="{{ product.productimage }}" class="card-img-top" alt="..." data-toggle="modal"
+                     data-target="#{{ product.product }}">
+                <div class="card-header bg-transparent bg-transparent border-secondary h5">
+                    <stron>{{ product.product }}</stron>
+                </div>
+                <div class="card-body bg-transparent">
+                    <p>{{ product.volumn }}</p>
+                    {% if product.pricedown|length %}
+                        <p class="card-text text-danger"><strong> HK${{ product.pricedown }}</strong>
+                            <s class="card-text text-dark" id="price_font">HK${{ product.price }} </s>
+                        </p>
+                    {% else %}
+                        <p class="card-text text-danger"><strong>HK${{ product.price }}</strong></p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent border-secondary text-center">
+                    <div class="btn-group">
+                        {% if current_user.is_anonymous %}
+                            <a href="/maintenance" class="btn btn-primary btn-md" role="button">
+                                <span>  QuickBuy</span>
+                            </a>
+                            {% for sub_categories in subcats %}
+                                {% if sub_categories.id == product.categories_id %}
+                                    <a href="/reviews/{{ sub_categories.id }}/{{ product.id }}"
+                                       class="btn border-primary text-primary bg-transparent" role="button"><span>  Review</span>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <a href="/maintenance" class="btn btn-primary btn-md" role="button">
+                                <i class="fa fa-cart-plus fa-1x"></i>
+                            </a>
+                            <a class="btn btn-secondary btn-md" href="/edit_product/{{ product.id }}"
+                               role="button"><i class="fa fa-cog fa-1x"></i></a>
+                            <a class="btn btn-danger btn-md" href="/delete_product/{{ product.id }}"
+                               role="button"><i class="fa fa-trash-o fa-1x"></i></a>
+                            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                            </a>
+                            <ul class="dropdown-menu text-center">
+                                {% for promotion in promotions %}
+                                    <li><a class="btn text-dark"
+                                           href="/add_promotion/{{ product.id }}/{{ promotion.id }}">
+                                        <i class="fa fa-plus"></i>{{ promotion.name }}</a>
+                                    </li>
+                                {% endfor %}
+                                <div class="dropdown-divider"></div>
+                                {% for sub_categories in subcats %}
+                                    {% if sub_categories.id == product.categories_id %}
+                                        <a href="/reviews/{{ sub_categories.id }}/{{ product.id }}"
+                                           class="btn text-info " role="button"><span>  Review</span>
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="{{ product.product }}" tabindex="-1" role="dialog"
+                 aria-labelledby="{{ product.product }}Label"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="{{ product.product }}Label">{{ product.product }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><b>Volume:</b> {{ product.volumn }}</p>
+                            <p><b>Origin:</b> {{ product.origin }}</p>
+                            <p><b>Details:</b> {{ product.details }}</p>
+                            <b>Brand:
+                                <div class="border" id="PhotoBorder"><img src="{{ product.productbrand.imgurl }}"></div>
+                            </b>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-around">
+            <li class="previous{% if not prev_url %} disabled{% endif %} ">
+                <a class="page-link" href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> {{ _('Previous') }}
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %} ">
+                <a class="page-link" href="{{ next_url or '#' }}">{{ _('Next') }}
+                    <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
