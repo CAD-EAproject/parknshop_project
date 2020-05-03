@@ -1,0 +1,14 @@
+<div class="row">
+    {% for store in storeresults %}
+        <div class="card border-secondary mb-3 col-md-6">
+            <img class="col-3 ml-auto" src="{{ store.companybrand.photourl }}">
+            <div class="h4 card-header bg-transparent border-primary text-primary mt-0">{{ store.store }}</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title"><span class="fa fa-map-marker fa-2x"></span>
+                    {{ store.address }}, {{ store.district }}, {{ store.district.region }}
+                </h5>
+                <h5 class="card-text"><span class="fa fa-phone fa-1x"></span> {{ store.tel }}</h5>
+            </div>
+        </div>
+    {% endfor %}
+</div>

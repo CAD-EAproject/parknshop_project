@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block current_app_content %}
+    <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li class="breadcrumb-item" aria-current="page">Store</li>
+        </ol>
+    </nav>
+    <div class="row justify-content-center">
+        <nav class="navbar">
+            <ul class="nav nav-pills">
+                {% for region in regions %}
+                    <li class="nav-item dropdown">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">{{ region.region }}</a>
+                        <div class="dropdown-menu">
+                            {% for district in districts %}
+                                {% if district.region_id == region.id %}
+                                    <a class="dropdown-item" href="#{{ district.id }}">{{ district.district }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+    <br>
+    {% for district in districts %}
+        <div data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+            <h2 id="{{ district.id }}">{{ district.district }}</h2>
+            <div class="row">
+                {% for store in stores %}
+                    {% if store.district_id == district.id %}
+                        <div class="media col-md-12">
+                            <img class="col-xs-1 mr-3 mt-3" src="{{ store.companybrand.photourl }}">
+                            <div class="media-body">
+                                <div class="h4 card-header bg-transparent border-primary text-primary mt-0">{{ store.store }}
+                                </div>
+                                <h6 class=""><span
+                                        class="fa fa-map-marker fa-1x"></span> {{ store.address }}, {{ store.district }}, {{ store.district.region }}
+                                </h6>
+                                <h6 class=""><span class="fa fa-phone fa-1x"></span> {{ store.tel }}</h6>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <br>
+        <br>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block current_app_content %}
+    <br>
+    <div class="row">
+        <h1 class="mr-auto">{{ _('Create District') }}</h1>
+        <div class="ml-auto">
+            <a class="btn btn-light" href="{{ url_for('location.create_store') }}" role="button">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>
+                <button type="button " class="btn btn-info mb-2 pull-right ml-1" data-toggle="modal"
+                        data-target="#ModalLongRegion">
+                    New Region
+                </button>
+                <div class="modal fade" id="ModalLongRegion" tabindex="-1" role="dialog"
+                     aria-labelledby="ModalLongRegionTitle"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-left" id="ModalLongRegionTitle">New Region</h5>
+                            </div>
+                            <div class="modal-body text-left">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                         {{ wtf.quick_form(form2) }}
+                                        <br>
+                                    </div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for region in regions %}
+                                                <tr>
+                                                    <td>{{ region.region }}</td>
+                                                    <td>
+                                                        <a class="btn btn-danger btn-sm" href="/delete_region/{{ region.id }}"
+                                                           role="button"><i class="fa fa-trash-o"></i></a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success mb-2 pull-right" data-toggle="modal"
+                        data-target="#ModalLongDistrict">
+                    New District
+                </button>
+                <div class="modal fade bd-example-modal-lg" id="ModalLongDistrict" tabindex="-1" role="dialog"
+                     aria-labelledby="ModalLongDistrictTitle"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-left" id="ModalLongDistrictTitle">New District</h5>
+                            </div>
+                            <div class="modal-body text-left">
+                                {{ wtf.quick_form(form1) }}
+                                <br>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="h4"><strong>District</strong></th>
+            <th class="h4"><strong>Region</strong></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for district in districts %}
+            <tr>
+                <td>{{ district.district }}</td>
+                <td>{{ district.region }}</td>
+                <td class="text-right">
+                    <a class="btn btn-secondary btn-sm" href="/edit_district/{{ district.id }}"
+                                          role="button"><i class="fa fa-cog"></i></a>
+                    <a class="btn btn-danger btn-sm" href="/delete_district/{{ district.id }}"
+                                          role="button"><i class="fa fa-trash-o"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+{% endblock %}
