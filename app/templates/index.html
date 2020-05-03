@@ -2,26 +2,337 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block current_app_content %}
-    <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
-    {% if form %}
-        {{ wtf.quick_form(form) }}
-        <br>
+    <div class="text-right">
+        {% if not current_user.is_anonymous %}
+            <a type="button" data-toggle="modal" data-target="#Banner" class="btn btm-sm">
+                <i class="fa fa-plus" aria-hidden="true"></i> Banner
+            </a>
+            <div class="modal fade bd-example-modal-lg" id="Banner" tabindex="-1" role="dialog"
+                 aria-labelledby="BannerTitle"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-left" id="BannerTitle">New Banner</h5>
+                        </div>
+                        <div class="modal-body text-left">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {{ wtf.quick_form(form1) }}
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if not current_user.is_anonymous %}
+            <a type="button" data-toggle="modal" data-target="#ModalLongPromotion" class="btn btm-sm">
+                <i class="fa fa-plus" aria-hidden="true"></i> Promotion
+            </a>
+            <div class="modal fade bd-example-modal-lg" id="ModalLongPromotion" tabindex="-1" role="dialog"
+                 aria-labelledby="ModalLongPromotionTitle"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-left" id="ModalLongPromotionTitle">New Promotion</h5>
+                        </div>
+                        <div class="modal-body text-left">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {{ wtf.quick_form(form2) }}
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if not current_user.is_anonymous %}
+            <a type="button" data-toggle="modal" data-target="#ModalFeature" class="btn btm-sm">
+                <i class="fa fa-plus" aria-hidden="true"></i> Feature
+            </a>
+            <div class="modal fade bd-example-modal-lg" id="ModalFeature" tabindex="-1" role="dialog"
+                 aria-labelledby="ModalFeatureTitle"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-left" id="ModalFeatureTitle">New Feature</h5>
+                        </div>
+                        <div class="modal-body text-left">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {{ wtf.quick_form(form3) }}
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div id="BannerCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for banner in banners %}
+                <div class="carousel-item">
+                    <img src="{{ banner.banner }}" class="d-block w-100">
+                    {% if not current_user.is_anonymous %}
+                        <div class="carousel-caption d-none d-md-block">
+                            <a class="btn btn-secondary btn-secondary" href="/edit_banner/{{ banner.id }}"
+                               role="button"><i class="fa fa-cog"></i></a>
+                            <a class="btn btn-md btn-danger" href="/delete_banner/{{ banner.id }}"
+                               role="button"><i class="fa fa-trash-o fa-1x"></i></a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev " href="#BannerCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#BannerCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+    <div class="text-center">
+        <a href="#categories" class="btn btn-secondary mb-2 btn-sm btn-block" data-toggle="collapse">
+            <i class="fa fa-chevron-down fa-1x"></i> Categories <i class="fa fa-chevron-down fa-1x"></i></a>
+        <div id="categories" class="collapse">
+            <div class="col-md-12">
+                {% for categories in categoriess %}
+                    <div class="dropright text-left ml-1 mb-1">
+                        <button class="btn btn-md dropdown-toggle col-md-6 text-center" type="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                            <span>{{ categories.categories }}</span>
+                        </button>
+                        <div class="dropdown-menu col-md-6 text-center bg-light">
+                            {% for sub_categories in subcats %}
+                                {% if sub_categories.categories_id == categories.id %}
+                                    <a class="dropdown-item"
+                                       href="/show_product/{{ sub_categories.id }}">{{ sub_categories.subcategories }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <nav class="navbar bg-transparent border-bottom-1">
+            <div class="h2 text-info">
+                <img src="https://www.parknshop.com/medias/sys_master/h59/h76/9121355825182/HomepageMainBannerSmallImage.jpg"
+                     id="index_image">
+                Promotion
+            </div>
+        </nav>
+    </div>
+    <div class="row justify-content-center">
+        {% for promotion in promotions %}
+            <div class="card border-0 col-md-4">
+                {% if not current_user.is_anonymous %}
+                    <div class="text-center cardbody">
+                        <div class="btn-group">
+                            <a class="btn btn-outline-secondary" href="/edit_promotion/{{ promotion.id }}"
+                               role="button"><i class="fa fa-cog"></i></a>
+                            <a class="btn btn-md btn-outline-danger" href="/delete_promotion/{{ promotion.id }}"
+                               role="button"><i class="fa fa-trash-o fa-1x"></i></a>
+                        </div>
+                    </div>
+                {% endif %}
+                <a href="/show_promotion/{{ promotion.id }}"><img src="{{ promotion.url }}" class="card-img-top"></a>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <nav class="navbar bg-transparent border-bottom-1">
+            <div class="h2 text-info">
+                <img src="https://www.parknshop.com/medias/sys_master/h4d/h76/9121355431966/HomepageMainBannerSmallImage.jpg"
+                     id="index_image">
+                New Arrivals
+            </div>
+        </nav>
+    </div>
+    {% if not current_user.is_anonymous %}
+        <div class="row justify-content-center">
+            <button type="button" class="btn btn-info mb-2 pull-right ml-1 btn-sm" data-toggle="modal"
+                    data-target="#Product">
+                New Product
+            </button>
+            <div class="modal fade bd-example-modal-lg" id="Product" tabindex="-1" role="dialog"
+                 aria-labelledby="ProductTitle"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-left" id="ProductTitle">New Product</h5>
+                        </div>
+                        <div class="modal-body text-left">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {{ wtf.quick_form(productform) }}
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="btn btn-success mb-2 pull-right ml-1 btn-sm" role="button"
+               href="{{ url_for('product.productbrand') }}">New Product Brand
+            </a>
+        </div>
     {% endif %}
-    {% for post in posts %}
-        {% include '_post.html' %}
-    {% endfor %}
-    <nav aria-label="...">
-        <ul class="pager">
-            <li class="previous{% if not prev_url %} disabled{% endif %}">
-                <a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
-                </a>
-            </li>
-            <li class="next{% if not next_url %} disabled{% endif %}">
-                <a href="{{ next_url or '#' }}">
-                    {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <div class="row justify-content-around">
+        {% for product in newproducts %}
+            <div class="card col-lg-3 bg-transparent border-secondary" style="width: 14rem;">
+                <img src="{{ product.productimage }}" class="card-img-top" alt="..." data-toggle="modal"
+                     data-target="#{{ product.product }}">
+                <div class="card-header bg-transparent bg-transparent border-secondary h5">
+                    <stron>{{ product.product }}</stron>
+                </div>
+                <div class="card-body bg-transparent">
+                    <p>{{ product.volumn }}</p>
+                    {% if product.pricedown|length %}
+                        <p class="card-text text-danger"><strong> HK${{ product.pricedown }}</strong>
+                            <s class="card-text text-dark" id="price_font">HK${{ product.price }} </s>
+                        </p>
+                    {% else %}
+                        <p class="card-text text-danger"><strong>HK${{ product.price }}</strong></p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent border-secondary text-center">
+                    <div class="btn-group ">
+                        {% if current_user.is_anonymous %}
+                            <a href="/maintenance" class="btn btn-primary btn-md" role="button">
+                                <i class="fa fa-cart-plus fa-1x"></i><span>  Add to Cart</span>
+                            </a>
+                        {% else %}
+                            <a href="/maintenance" class="btn btn-primary btn-md" role="button">
+                                <i class="fa fa-cart-plus fa-1x"></i>
+                            </a>
+                            <a class="btn btn-secondary btn-md" href="/edit_product/{{ product.id }}"
+                               role="button"><i class="fa fa-cog fa-1x"></i></a>
+                            <a class="btn btn-danger btn-md" href="/delete_product/{{ product.id }}"
+                               role="button"><i class="fa fa-trash-o fa-1x"></i></a>
+                            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                            </a>
+                            <ul class="dropdown-menu text-center">
+                                {% for promotion in promotions %}
+                                    <li><a class="btn text-dark"
+                                           href="/add_promotion/{{ product.id }}/{{ promotion.id }}">
+                                        <i class="fa fa-plus"></i>{{ promotion.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="{{ product.product }}" tabindex="-1" role="dialog"
+                 aria-labelledby="{{ product.product }}Label"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="{{ product.product }}Label">{{ product.product }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><b>Volume:</b> {{ product.volumn }}</p>
+                            <p><b>Origin:</b> {{ product.origin }}</p>
+                            <p><b>Details:</b> {{ product.details }}</p>
+                            <b>Brand:
+                                <div class="border" id="PhotoBorder"><img src="{{ product.productbrand.imgurl }}"></div>
+                            </b>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <nav class="navbar bg-transparent border-bottom-1">
+            <div class="h2 text-info">
+                <img src="https://www.parknshop.com/medias/sys_master/hc4/he0/9175935615006/icon_blog.png"
+                     id="index_image">
+                Feature
+            </div>
+        </nav>
+    </div>
+    <div>
+        {% for feature in features %}
+            <div class="row no-gutters position-relative">
+                <div class="col-md-6 mb-md-0 p-md-4 order-md-12 mt-auto mb-auto">
+                    <img src="{{ feature.url }}" class="w-100">
+                </div>
+                <div class="col-md-6 position-static p-4 pl-md-0 order-md-0 mt-auto mb-auto">
+                    <h4><strong>{{ feature.title }}</strong></h4>
+                    <p class="lead" id="feature_text">{{ feature.description }}</p>
+                    <div class="btn-group">
+                        <a class="btn btn-primary btn-sm" href="/maintenance" role="button">Learn more</a>
+                        {% if not current_user.is_anonymous %}
+                            <a class="btn btn-secondary btn-sm" href="/edit_feature/{{ feature.id }}"
+                               role="button"><i class="fa fa-cog fa-1x"></i></a>
+                            <a class="btn btn-danger btn-sm" href="/delete_feature/{{ feature.id }}"
+                               role="button"><i class="fa fa-trash-o fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <nav class="navbar bg-transparent">
+            <div class="h2 text-info">
+                <img src="https://www.parknshop.com/medias/sys_master/h71/h76/9121356611614/HomepageMainBannerSmallImage.jpg"
+                     id="index_image">
+                HotBrand
+            </div>
+        </nav>
+    </div>
+    <div class="row justify-content-center">
+        <div class="card-group">
+            {% for product_brand in pdbrands %}
+                <div class="col-md-2">
+                    <div class="border" id="IndexPhotoBorder"><img src="{{ product_brand.imgurl }}"></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
