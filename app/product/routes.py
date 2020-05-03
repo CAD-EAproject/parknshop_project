@@ -126,6 +126,79 @@ def remove_promotion(id1, id2):
     flash(_('Product removed from Promotion'))
     return redirect(url_for('main.index'))
 
+@bp.route('/reviews/<int:id1>/<int:id2>', methods=['GET', 'POST'])
+def reviews(id1, id2):
+    pro_categories = SubCategories.query.get_or_404(id1)
+    re_product = Product.query.get_or_404(id2)
+    if Review.query.filter(Review.product_id == re_product.id).count() > 0:
+        rating1 = (db.session.query(func.avg(Review.rating1)).filter(Review.product_id == re_product.id).scalar()) * 20
+        rating2 = (db.session.query(func.avg(Review.rating2)).filter(Review.product_id == re_product.id).scalar()) * 20
+        rating3 = (db.session.query(func.avg(Review.rating3)).filter(Review.product_id == re_product.id).scalar()) * 20
+        rating4 = (db.session.query(func.avg(Review.rating4)).filter(Review.product_id == re_product.id).scalar()) * 20
+    else:
+        rating1 = 0
+        rating2 = 0
+        rating3 = 0
+        rating4 = 0
+    total = Review.query.filter(Review.product_id == re_product.id).count()
+    subcategories = pro_categories.id
+    review_comment = Review.query.filter(Review.product_id == re_product.id)
+    return render_template('product/reviews.html', title=_('Reviews'), rating1=rating1,
+                           rating2=rating2, rating3=rating3, rating4=rating4, total=total,
+                           subcategories=subcategories, review_comment=review_comment,
+                           pro_categories=pro_categories, re_product=re_product)
+
+@bp.route('/create_reviews/<int:id1>/<int:id2>', methods=['GET', 'POST'])
+def create_reviews(id1, id2):
+    form = RatingForm()
+    pro_categories = SubCategories.query.get_or_404(id1)
+    re_product = Product.query.get_or_404(id2)
+    if form.validate_on_submit():
+        product_review = Review(rating1=form.rating1.data, rating2=form.rating2.data,
+                                rating3=form.rating3.data, rating4=form.rating4.data,
+                                comment=form.comment.data, product_id=re_product.id)
+        db.session.add(product_review)
+        db.session.commit()
+        flash(_('Reviews added, Thank you!'))
+        return redirect('/reviews/{id_1}/{id_2}'.format(id_1=id1, id_2=id2))
+    subcategories = pro_categories.id
+    return render_template('product/create_reviews.html', title=_('Create Reviews'),
+                           form=form, pro_categories=pro_categories, re_product=re_product)
+
+@bp.route('/remove_reviews/<int:id1>/<int:id2>/<int:id3>')
+@login_required
+def remove_reviews(id1, id2, id3):
+    de_review = Review.query.get_or_404(id3)
+    db.session.delete(de_review)
+    db.session.commit()
+    flash(_('Review removed'))
+    return redirect('/reviews/{id_1}/{id_2}'.format(id_1=id1, id_2=id2))
+
+
+@bp.route('/edit_reviews/<int:id1>/<int:id2>/<int:id3>', methods=['GET', 'POST'])
+@login_required
+def edit_reviews(id1, id2, id3):
+    ed_review = Review.query.get_or_404(id3)
+    pro_categories = SubCategories.query.get_or_404(id1)
+    re_product = Product.query.get_or_404(id2)
+    form = RatingForm(request.form)
+    if form.validate_on_submit():
+        ed_review.rating1 = form.rating1.data
+        ed_review.rating2 = form.rating2.data
+        ed_review.rating3 = form.rating3.data
+        ed_review.rating4 = form.rating4.data
+        ed_review.comment = form.comment.data
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect('/reviews/{id_1}/{id_2}'.format(id_1=id1, id_2=id2))
+    elif request.method == 'GET':
+        form.rating1.data = ed_review.rating1
+        form.rating2.data = ed_review.rating2
+        form.rating3.data = ed_review.rating3
+        form.rating4.data = ed_review.rating4
+        form.comment.data = ed_review.comment
+    return render_template('product/edit_reviews.html', title=_('Edit Reviews'),
+                           form=form, re_product=re_product, pro_categories=pro_categories, ed_review=ed_review)
 
 
 
