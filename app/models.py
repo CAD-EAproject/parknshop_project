@@ -167,3 +167,31 @@ class Store(db.Model):
 
     def __repr__(self):
         return '<Store {}>'.format(self.store)
+
+class Categories(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    categories = db.Column(db.String(500), unique=True, index=True)
+    sub_categoriess = db.relationship('SubCategories', backref='categories', lazy='dynamic')
+
+    def __repr__(self):
+        return '{}'.format(self.categories)
+
+
+class SubCategories(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subcategories = db.Column(db.String(500), unique=True, index=True)
+    categories_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    products = db.relationship('Product', backref='subcategories', lazy='dynamic')
+
+    def __repr__(self):
+        return '{}'.format(self.subcategories)
+
+
+class ProductBrand(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    productbrand = db.Column(db.String(500), unique=True, index=True)
+    imgurl = db.Column(db.String(500))
+    products = db.relationship('Product', backref='productbrand', lazy='dynamic')
+
+    def __repr__(self):
+        return '{}'.format(self.productbrand)
