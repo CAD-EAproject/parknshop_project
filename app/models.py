@@ -6,12 +6,21 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
+from sqlalchemy import Index
 
 followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
+
+promotion_products = db.Table(
+    'promotion_products',
+    db.Column('promotion_id', db.Integer, db.ForeignKey('promotion.id')),
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id'))
+)
+
+Index('promo_items', promotion_products.c.promotion_id, promotion_products.c.product_id, unique=True)
 
 
 class User(UserMixin, db.Model):
@@ -39,8 +48,7 @@ class User(UserMixin, db.Model):
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
     def follow(self, user):
         if not self.is_following(user):
@@ -70,7 +78,7 @@ class User(UserMixin, db.Model):
     def verify_reset_password_token(token):
         try:
             id = jwt.decode(token, current_app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
+                            algorithm=['HS256'])['reset_password']
         except:
             return
         return User.query.get(id)
@@ -89,3 +97,34 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+class Promotion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    url = db.Column(db.String(500))
+    endpoint = db.Column(db.String(500))
+    products = db.relationship('Product',
+                               secondary=promotion_products,
+                               backref=db.backref('promotion', lazy='dynamic'))
+
+    def __repr__(self):
+        return "{{ url_for('{}') }}".format(self.endpoint)
+    
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product = db.Column(db.String(500))
+    volumn = db.Column(db.String(500))
+    price = db.Column(db.String(500))
+    pricedown = db.Column(db.String(500))
+    details = db.Column(db.String(500))
+    origin = db.Column(db.String(500))
+    productimage = db.Column(db.String(500))
+    categories_id = db.Column(db.Integer, db.ForeignKey('sub_categories.id'))
+    productbrand_id = db.Column(db.Integer, db.ForeignKey('product_brand.id'))
+    reviews = db.relationship('Review', backref='product', lazy='dynamic')
+    promotions = db.relationship('Promotion',
+                                 secondary=promotion_products,
+                                 backref=db.backref('product', lazy='dynamic'))
+
+    
