@@ -200,6 +200,124 @@ def edit_reviews(id1, id2, id3):
     return render_template('product/edit_reviews.html', title=_('Edit Reviews'),
                            form=form, re_product=re_product, pro_categories=pro_categories, ed_review=ed_review)
 
+@bp.route('/create_categories', methods=['GET', 'POST'])
+@login_required
+def create_categories():
+    form = CategoriesForm()
+    subform = SubCategoriesForm()
+    subform.catid.choices = [(c.id, c.categories) for c in db.session.query(Categories).all()]
+    if form.validate_on_submit():
+        categories = Categories(categories=form.cat.data)
+        db.session.add(categories)
+        db.session.commit()
+        flash(_('New categories added'))
+        return redirect(url_for('product.create_categories'))
+    elif subform.validate_on_submit():
+        subcategories = SubCategories(subcategories=subform.subcat.data, categories_id=subform.catid.data)
+        db.session.add(subcategories)
+        db.session.commit()
+        flash(_('New Sub-Categories added'))
+        return redirect(url_for('product.create_categories'))
+    categoriess = Categories.query.order_by(Categories.id)
+    subcategoriess = SubCategories.query.order_by(SubCategories.categories_id)
+    return render_template('product/create_categories.html', title=_('Create Categories'),
+                           form=form, subcategoriess=subcategoriess, categoriess=categoriess, subform=subform)
+
+@bp.route('/edit_categories/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_categories(id):
+    categoriesid = Categories.query.get_or_404(id)
+    form = CategoriesForm(request.form)
+    if form.validate_on_submit():
+        categoriesid.categories = form.cat.data
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect(url_for('product.create_categories'))
+    elif request.method == 'GET':
+        form.cat.data = categoriesid.categories
+    return render_template('product/edit_categories.html', title=_('Edit Categories'),
+                           form=form, categoriesid=categoriesid)
+
+@bp.route('/edit_subcategories/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_subcategories(id):
+    subcategoriesid = SubCategories.query.get_or_404(id)
+    form = SubCategoriesForm(request.form)
+    form.catid.choices = [(c.id, c.categories) for c in db.session.query(Categories).all()]
+    if form.validate_on_submit():
+        subcategoriesid.subcategories = form.subcat.data
+        subcategoriesid.categories_id = form.catid.data
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect(url_for('product.create_categories'))
+    elif request.method == 'GET':
+        form.subcat.data = subcategoriesid.subcategories
+        form.catid.data = subcategoriesid.categories_id
+    return render_template('product/edit_subcategories.html', title=_('Edit Sub-Categories'),
+                           form=form, subcategoriesid=subcategoriesid)
+
+@bp.route('/delete_categories/<int:id>')
+@login_required
+def delete_categories(id):
+    delete_categories = Categories.query.get_or_404(id)
+    db.session.delete(delete_categories)
+    db.session.commit()
+    return redirect(url_for('product.create_categories'))
+
+@bp.route('/delete_subcategories/<int:id>')
+@login_required
+def delete_subcategories(id):
+    delete_subcategories = SubCategories.query.get_or_404(id)
+    db.session.delete(delete_subcategories)
+    db.session.commit()
+    return redirect(url_for('product.create_categories'))
+
+@bp.route('/delete_productbrand/<int:id>')
+@login_required
+def delete_productbrand(id):
+    delete_brand = Categories.query.get_or_404(id)
+    db.session.delete(delete_brand)
+    db.session.commit()
+    return redirect(url_for('product.create_categories'))
+
+@bp.route('/productbrand', methods=['GET', 'POST'])
+@login_required
+def productbrand():
+    form = ProductBrandForm()
+    if form.validate_on_submit():
+        productbrand = ProductBrand(productbrand=form.PoBrand.data, imgurl=form.url.data)
+        db.session.add(productbrand)
+        db.session.commit()
+        flash(_('New Product Brand added'))
+        return redirect(url_for('product.productbrand'))
+    productbrands = ProductBrand.query.order_by(ProductBrand.id)
+    return render_template('product/productbrand.html', title=_('Create Product Brand'),
+                           form=form, productbrands=productbrands)
+
+@bp.route('/edit_PoBrand/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_PoBrand(id):
+    productbrand = ProductBrand.query.get_or_404(id)
+    form = ProductBrandForm(request.form)
+    if form.validate_on_submit():
+        productbrand.productbrand = form.PoBrand.data
+        productbrand.imgurl = form.url.data
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect(url_for('product.productbrand'))
+    elif request.method == 'GET':
+        form.PoBrand.data = productbrand.productbrand
+        form.url.data = productbrand.imgurl
+    return render_template('product/edit_PoBrand.html', title=_('Edit Product Brand'),
+                           form=form, productbrand=productbrand)
+
+@bp.route('/delete_PoBrand/<int:id>')
+@login_required
+def delete_PoBrand(id):
+    productbrand = ProductBrand.query.get_or_404(id)
+    db.session.delete(productbrand)
+    db.session.commit()
+    return redirect(url_for('product.productbrand'))
 
 
 
