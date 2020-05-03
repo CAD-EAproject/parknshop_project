@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block current_app_content %}
+    <br>
+    <div class="row">
+        <h1 class="mr-auto">{{ _('Reviews') }}</h1>
+        <div class="ml-auto">
+            <a class="btn btn-light" href="/reviews/{{ pro_categories.id }}/{{ re_product.id }}" role="button">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+{% endblock %}

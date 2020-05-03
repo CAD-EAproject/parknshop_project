@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block current_app_content %}
+    <br>
+    <div class="row">
+        <h1 class="mr-auto">{{ _('Create Categories') }}</h1>
+        <div class="ml-auto">
+            <a class="btn btn-light" href="{{ url_for('main.index') }}" role="button">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <div class="justify-content-center">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <button type="button" class="btn btn-info mb-2 pull-right ml-1" data-toggle="modal"
+                                data-target="#ModalLongCat">
+                            New Categories
+                        </button>
+                        <div class="modal fade bd-example-modal-lg" id="ModalLongCat" tabindex="-1" role="dialog"
+                             aria-labelledby="ModalLongCatTitle"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-left" id="ModalLongCatTitle">New Categories</h5>
+                                    </div>
+                                    <div class="modal-body text-left">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                {{ wtf.quick_form(form) }}
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success mb-2 pull-right ml-1" data-toggle="modal"
+                                data-target="#ModalLongSubCat">
+                            New Sub-Categories
+                        </button>
+                        <div class="modal fade bd-example-modal-lg" id="ModalLongSubCat" tabindex="-1" role="dialog"
+                             aria-labelledby="ModalLongSubCatTitle"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-left" id="ModalLongSubCatTitle">New Sub-Categories</h5>
+                                    </div>
+                                    <div class="modal-body text-left">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                {{ wtf.quick_form(subform) }}
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="thead-light">
+                    <th>ID</th>
+                    <th>Categories</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for categories in categoriess %}
+                    <tr>
+                        <td>{{ categories.id }}</td>
+                        <td>{{ categories.categories }}</td>
+                        <td class="text-right">
+                            <a class="btn btn-secondary btn-sm" href="/edit_categories/{{ categories.id }}"
+                               role="button"><i class="fa fa-cog"></i></a>
+                            <a class="btn btn-danger btn-sm" href="/delete_categories/{{ categories.id }}"
+                               role="button"><i class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <table class="table">
+                <thead>
+                    <tr class="thead-light">
+                        <th>ID</th>
+                        <th>Sub-Categories</th>
+                        <th>Categories</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for sub_categories in subcategoriess %}
+                    <tr>
+                        <td>{{ sub_categories.id }}</td>
+                        <td>{{ sub_categories.subcategories }}</td>
+                        <td>{{ sub_categories.categories }}</td>
+                        <td class="text-right">
+                            <a class="btn btn-secondary btn-sm" href="/edit_subcategories/{{ sub_categories.id }}"
+                               role="button"><i class="fa fa-cog"></i></a>
+                            <a class="btn btn-danger btn-sm" href="/delete_subcategories/{{ sub_categories.id }}"
+                               role="button"><i class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <br>
+{% endblock %}

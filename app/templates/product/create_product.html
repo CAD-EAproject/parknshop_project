@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block current_app_content %}
+    <br>
+    <div class="row">
+        <h1 class="mr-auto">{{ _('Create Product') }}</h1>
+        <div class="ml-auto">
+            <a class="btn btn-light" href="{{ url_for('main.index') }}" role="button">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <div class="justify-content-center">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        <div class="btn-group dropright">
+                            <button type="button" class="btn btn-dark dropdown-toggle mb-2" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-plus" aria-hidden="true"></i> ADD NEW
+                            </button>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ url_for('product.create_categories') }}">Categories</a>
+                                <a class="dropdown-item" href="{{ url_for('product.productbrand') }}">Brand</a>
+                            </ul>
+                        </div>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <button type="button" class="btn btn-info mb-2 pull-right ml-1" data-toggle="modal"
+                                data-target="#ModalLongRegion">
+                            New Product
+                        </button>
+                        <div class="modal fade bd-example-modal-lg" id="ModalLongRegion" tabindex="-1" role="dialog"
+                             aria-labelledby="ModalLongRegionTitle"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-left" id="ModalLongRegionTitle">New Product</h5>
+                                    </div>
+                                    <div class="modal-body text-left">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                {{ wtf.quick_form(form) }}
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="thead-light">
+                    <th></th>
+                    <th>Product</th>
+                    <th>Volumn</th>
+                    <th>Price</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="border" id="PhotoBorder"><img src="{{ product.productimage }}"></div>
+                        </td>
+                        <td>{{ product.product }}</td>
+                        <td>{{ product.volumn }}</td>
+                        <td>{{ product.price }}</td>
+                        <td></td>
+                        <td class="text-right">
+                            <a class="btn btn-secondary btn-sm" href="/edit_product/{{ product.id }}"
+                               role="button"><i class="fa fa-cog"></i></a>
+                            <a class="btn btn-danger btn-sm" href="/delete_product/{{ product.id }}"
+                               role="button"><i class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+{% endblock %}
