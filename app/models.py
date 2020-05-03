@@ -127,4 +127,43 @@ class Product(db.Model):
                                  secondary=promotion_products,
                                  backref=db.backref('product', lazy='dynamic'))
 
-    
+    class Region(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    region = db.Column(db.String(50), unique=True, index=True)
+    districts = db.relationship('District', backref='region', lazy='dynamic')
+
+    def __repr__(self):
+        return '{}'.format(self.region)
+
+
+class District(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    district = db.Column(db.String(50), unique=True, index=True)
+    region_id = db.Column(db.Integer, db.ForeignKey('region.id'))
+    stores = db.relationship('Store', backref='district', lazy='dynamic')
+
+    def __repr__(self):
+        return '{}'.format(self.district)
+
+
+class CompanyBrand(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    companybrand = db.Column(db.String(50), unique=True, index=True)
+    photourl = db.Column(db.String(500))
+    stores = db.relationship('Store', backref='companybrand', lazy='dynamic')
+
+    def __repr__(self):
+        return '{}'.format(self.companybrand)
+
+
+class Store(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    store = db.Column(db.String(500), unique=True, index=True)
+    address = db.Column(db.String(500))
+    tel = db.Column(db.String(500))
+    district_id = db.Column(db.Integer, db.ForeignKey('district.id'))
+    companybrand_id = db.Column(db.Integer, db.ForeignKey('company_brand.id'))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Store {}>'.format(self.store)
