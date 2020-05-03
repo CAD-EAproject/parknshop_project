@@ -1,11 +1,15 @@
 from datetime import datetime
+from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, g
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from app import current_app, db
-from app.main.forms import EditProfileForm, PostForm
-from app.models import User, Post
+from app.main.forms import EditProfileForm, PostForm, PromotionForm, FeatureForm, BannerForm
+from app.product.forms import ProductForm
+from app.models import SubCategories, Categories, ProductBrand, Promotion, Banner, Post, User, Feature, \
+                        Product, Review
 from app.main import bp
+from sqlalchemy import func
 
 
 @bp.before_request
@@ -15,43 +19,63 @@ def before_request():
         db.session.commit()
     g.locale = str(get_locale())
 
+@bp.route('/maintenance')
+def maintenance():
+    flash(_('Sorry! Our system is updating.'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
-        db.session.add(post)
+    form1 = BannerForm()
+    form2 = PromotionForm()
+    form3 = FeatureForm()
+    productform = ProductForm()
+    productform.catid.choices = [(c.id, c.subcategories) for c in db.session.query(SubCategories).all()]
+    productform.pdbid.choices = [(p.id, p.productbrand) for p in db.session.query(ProductBrand).all()]
+    if productform.validate_on_submit():
+        product = Product(product=productform.product.data, volumn=productform.volumn.data,
+                          price=productform.price.data, details=productform.details.data,
+                          origin=productform.origin.data, productimage=productform.url.data,
+                          categories_id=productform.catid.data, productbrand_id=productform.pdbid.data,
+                          pricedown=productform.pricedown.data)
+        db.session.add(product)
         db.session.commit()
-        flash(_('Your post is now live!'))
+        flash(_('New Product added'))
         return redirect(url_for('main.index'))
+    elif form3.validate_on_submit():
+        feature=Feature(title=form3.title.data, description=form3.description.data, url=form3.url.data)
+        db.session.add(feature)
+        db.session.commit()
+        flash(_('New Promotion added'))
+        return redirect(url_for('main.index'))
+    elif form2.validate_on_submit():
+        promotion=Promotion(name=form2.name.data, url=form2.url.data)
+        db.session.add(promotion)
+        db.session.commit()
+        flash(_('New Promotion added'))
+        return redirect(url_for('main.index'))
+    elif form1.validate_on_submit():
+        banneritem=Banner(banner=form1.banner.data)
+        db.session.add(banneritem)
+        db.session.commit()
+        flash(_('New Banner added'))
+        return redirect(url_for('main.index'))
+    banners = Banner.query.order_by(Banner.id)
+    categoriess = Categories.query.order_by(Categories.categories)
+    subcats = SubCategories.query.order_by(SubCategories.subcategories)
+    promotions = Promotion.query.order_by(Promotion.id)
+    features = Feature.query.all()
     page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.index', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('index.html', title=_('Home'), form=form,
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
-
-
-@bp.route('/explore')
-@login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.explore', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.explore', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('index.html', title=_('Explore'),
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+    pdbrands = ProductBrand.query.order_by(func.random()).paginate(
+        page, current_app.config['PRODUCTBRAND_PER_PAGE'], False)
+    newproducts = Product.query.order_by(Product.id.desc()).paginate(
+        page, current_app.config['NEWPRODUCT_PER_PAGE'], False)
+    reviews = Review.query.all()
+    return render_template('index.html', title=_('Home'), form1=form1, form2=form2, form3=form3,
+                           banners=banners, categoriess=categoriess, subcats=subcats,
+                           newproducts=newproducts.items, promotions=promotions, features=features,
+                           pdbrands=pdbrands.items, page=page, productform=productform, reviews=reviews)
 
 
 @bp.route('/user/<username>')
