@@ -1,0 +1,69 @@
+#header-navbar {
+    background-color: #214099;
+}
+
+#header-navbar a {
+    color: white;
+}
+
+#header-navbar a:hover {
+    color: white;
+}
+
+#header-menu a {
+    color: black;
+}
+
+#header-menu a:hover {
+    color: #214099;
+}
+
+#navbar-example3 {
+    position: relative;
+}
+
+#PhotoBorder{
+    width: 64px;
+    height: 64px;
+}
+
+#PhotoBorder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#IndexPhotoBorder{
+    width: 128px;
+    height: 128px;
+}
+
+#IndexPhotoBorder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#price_font{
+    font-size: 12px;
+}
+
+#index_image{
+    width: 45px;
+    border-radius: 60px;
+    display: inline-block;
+    vertical-align: middle
+}
+
+#feature_text{
+    font-size: 12px;
+}
+
+#comment_text{
+    font-size: 15px;
+}
+
+#time_text{
+    font-size: 10px;
+    color: #666666;
+}
